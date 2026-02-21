@@ -16,6 +16,7 @@ import { JwtPayload } from '../auth/strategies/jwt.strategy';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { IdParamDto } from '../common/dto/id-param.dto';
 
 interface AuthenticatedRequest extends Request {
   user: JwtPayload;
@@ -43,15 +44,20 @@ export class CategoriesController {
   @Put(':id')
   update(
     @Req() req: AuthenticatedRequest,
-    @Param('id') id: string,
+    @Param(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    params: IdParamDto,
     @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     body: UpdateCategoryDto,
   ) {
-    return this.categoriesService.update(req.user.sub, id, body);
+    return this.categoriesService.update(req.user.sub, params.id, body);
   }
 
   @Delete(':id')
-  remove(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
-    return this.categoriesService.remove(req.user.sub, id);
+  remove(
+    @Req() req: AuthenticatedRequest,
+    @Param(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    params: IdParamDto,
+  ) {
+    return this.categoriesService.remove(req.user.sub, params.id);
   }
 }

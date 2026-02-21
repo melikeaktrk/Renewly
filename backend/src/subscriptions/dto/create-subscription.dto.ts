@@ -6,10 +6,12 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  Matches,
   IsOptional,
   IsString,
   Min,
 } from 'class-validator';
+import { CUID_REGEX } from '../../common/constants/validation.constants';
 
 export enum Currency {
   TRY = 'TRY',
@@ -28,6 +30,7 @@ export class CreateSubscriptionDto {
 
   @Type(() => Number)
   @IsNumber()
+  @Min(0)
   amount!: number;
 
   @IsEnum(Currency)
@@ -52,7 +55,7 @@ export class CreateSubscriptionDto {
   autoRenew!: boolean;
 
   @IsOptional()
-  @IsString()
+  @Matches(CUID_REGEX, { message: 'Invalid category id format' })
   categoryId?: string | null;
 
   @IsOptional()
