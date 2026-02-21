@@ -26,7 +26,11 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.environment.set(\"accessToken\", pm.response.json().accessToken)"
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "if (jsonData.accessToken) {",
+                  "    pm.environment.set(\"accessToken\", jsonData.accessToken);",
+                  "}"
                 ]
               }
             }
@@ -68,7 +72,11 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.environment.set(\"accessToken\", pm.response.json().accessToken)"
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "if (jsonData.accessToken) {",
+                  "    pm.environment.set(\"accessToken\", jsonData.accessToken);",
+                  "}"
                 ]
               }
             }
