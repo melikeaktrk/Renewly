@@ -16,6 +16,7 @@ import { JwtPayload } from '../auth/strategies/jwt.strategy';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { SubscriptionsService } from './subscriptions.service';
+import { IdParamDto } from '../common/dto/id-param.dto';
 
 interface AuthenticatedRequest extends Request {
   user: JwtPayload;
@@ -47,14 +48,19 @@ export class SubscriptionsController {
   }
 
   @Get(':id')
-  findOne(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
-    return this.subscriptionsService.findOne(req.user.sub, id);
+  findOne(
+    @Req() req: AuthenticatedRequest,
+    @Param(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    params: IdParamDto,
+  ) {
+    return this.subscriptionsService.findOne(req.user.sub, params.id);
   }
 
   @Put(':id')
   update(
     @Req() req: AuthenticatedRequest,
-    @Param('id') id: string,
+    @Param(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    params: IdParamDto,
     @Body(
       new ValidationPipe({
         whitelist: true,
@@ -64,11 +70,15 @@ export class SubscriptionsController {
     )
     body: UpdateSubscriptionDto,
   ) {
-    return this.subscriptionsService.update(req.user.sub, id, body);
+    return this.subscriptionsService.update(req.user.sub, params.id, body);
   }
 
   @Delete(':id')
-  remove(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
-    return this.subscriptionsService.remove(req.user.sub, id);
+  remove(
+    @Req() req: AuthenticatedRequest,
+    @Param(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    params: IdParamDto,
+  ) {
+    return this.subscriptionsService.remove(req.user.sub, params.id);
   }
 }
