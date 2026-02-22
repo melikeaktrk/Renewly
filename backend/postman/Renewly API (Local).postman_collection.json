@@ -26,9 +26,17 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
                   "const jsonData = pm.response.json();",
                   "",
-                  "if (jsonData.accessToken) {",
+                  "pm.test(\"Response contains accessToken\", function () {",
+                  "    pm.expect(jsonData).to.have.property(\"accessToken\");",
+                  "});",
+                  "",
+                  "if (jsonData && jsonData.accessToken) {",
                   "    pm.environment.set(\"accessToken\", jsonData.accessToken);",
                   "}"
                 ]
@@ -72,9 +80,17 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
                   "const jsonData = pm.response.json();",
                   "",
-                  "if (jsonData.accessToken) {",
+                  "pm.test(\"Response contains accessToken\", function () {",
+                  "    pm.expect(jsonData).to.have.property(\"accessToken\");",
+                  "});",
+                  "",
+                  "if (jsonData && jsonData.accessToken) {",
                   "    pm.environment.set(\"accessToken\", jsonData.accessToken);",
                   "}"
                 ]
@@ -166,9 +182,18 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
                   "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains subscription id\", function () {",
+                  "    pm.expect(json).to.have.property(\"id\");",
+                  "});",
+                  "",
                   "if (json && json.id) {",
-                  "  pm.environment.set(\"subscriptionId\", json.id);",
+                  "    pm.environment.set(\"subscriptionId\", json.id);",
                   "}"
                 ]
               }
@@ -222,7 +247,27 @@
                 "{{subscriptionId}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "const expectedSubscriptionId = pm.variables.get(\"subscriptionId\");",
+                  "",
+                  "pm.test(\"Response id matches subscriptionId variable\", function () {",
+                  "    pm.expect(String(jsonData.id)).to.eql(String(expectedSubscriptionId));",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Update Subscription",
@@ -462,9 +507,18 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
                   "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains category id\", function () {",
+                  "    pm.expect(json).to.have.property(\"id\");",
+                  "});",
+                  "",
                   "if (json && json.id) {",
-                  "  pm.environment.set(\"categoryId\", json.id);",
+                  "    pm.environment.set(\"categoryId\", json.id);",
                   "}"
                 ]
               }
