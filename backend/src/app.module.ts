@@ -6,9 +6,19 @@ import { CategoriesModule } from './categories/categories.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ReminderModule } from './reminder/reminder.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, CategoriesModule, SubscriptionsModule, DashboardModule],
+  imports: [
+    ScheduleModule.forRoot(),
+    PrismaModule,
+    AuthModule,
+    CategoriesModule,
+    SubscriptionsModule,
+    DashboardModule,
+    ReminderModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
