@@ -8,6 +8,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ReminderModule } from './reminder/reminder.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ReminderModule } from './reminder/reminder.module';
     SubscriptionsModule,
     DashboardModule,
     ReminderModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
