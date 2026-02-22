@@ -11,6 +11,17 @@ export class ReminderService {
 
   @Cron('0 0 * * *')
   async sendRenewalReminders() {
+    // TODO: REMOVE AFTER TESTING
+    console.log(
+      '[Reminder] tick',
+      new Date().toISOString(),
+      'env=',
+      process.env.NODE_ENV,
+    );
+    await this.runReminderCheck();
+  }
+
+  private async runReminderCheck() {
     const subscriptions = await this.prisma.subscription.findMany({
       where: { status: 'ACTIVE' },
       select: {
