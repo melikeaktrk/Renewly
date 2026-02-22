@@ -22,57 +22,55 @@ export class ReminderService {
       },
     });
 
-    const today = new Date();
-    const todayStart = this.startOfDay(today);
+    const today = this.startOfDay(new Date());
 
     for (const subscription of subscriptions) {
       const reminderDate = this.startOfDay(subscription.nextBillingDate);
       reminderDate.setDate(
         reminderDate.getDate() - subscription.reminderDaysBefore,
       );
+      const reminderDay = this.startOfDay(reminderDate);
 
-      if (!this.isSameDate(reminderDate, todayStart)) {
-        continue;
-      }
-
-      const existingLog = await this.prisma.notificationLog.findUnique({
-        where: {
-          userId_subscriptionId_type_scheduledFor: {
-            userId: subscription.userId,
-            subscriptionId: subscription.id,
-            type: RENEWAL_REMINDER_TYPE,
-            scheduledFor: todayStart,
-          },
-        },
-      });
-
-      if (existingLog) {
-        continue;
-      }
-
-      const message = `Reminder: ${subscription.name} will renew in ${subscription.reminderDaysBefore} days`;
-
-      try {
-        await this.prisma.notificationLog.create({
-          data: {
-            userId: subscription.userId,
-            subscriptionId: subscription.id,
-            type: RENEWAL_REMINDER_TYPE,
-            message,
-            scheduledFor: todayStart,
+      if (reminderDay.getTime() === today.getTime()) {
+        const existingLog = await this.prisma.notificationLog.findUnique({
+          where: {
+            userId_subscriptionId_type_scheduledFor: {
+              userId: subscription.userId,
+              subscriptionId: subscription.id,
+              type: RENEWAL_REMINDER_TYPE,
+              scheduledFor: today,
+            },
           },
         });
 
-        console.log(message);
-      } catch (error) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.code === 'P2002'
-        ) {
+        if (existingLog) {
           continue;
         }
 
-        throw error;
+        const message = `Reminder: ${subscription.name} will renew in ${subscription.reminderDaysBefore} days`;
+
+        try {
+          await this.prisma.notificationLog.create({
+            data: {
+              userId: subscription.userId,
+              subscriptionId: subscription.id,
+              type: RENEWAL_REMINDER_TYPE,
+              message,
+              scheduledFor: this.startOfDay(today),
+            },
+          });
+
+          console.log(message);
+        } catch (error) {
+          if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === 'P2002'
+          ) {
+            continue;
+          }
+
+          throw error;
+        }
       }
     }
   }
@@ -83,7 +81,7 @@ export class ReminderService {
     return normalized;
   }
 
-  private isSameDate(a: Date, b: Date) {
+  private isSameDay(a: Date, b: Date) {
     return a.getTime() === b.getTime();
   }
 }
