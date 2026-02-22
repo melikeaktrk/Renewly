@@ -18,15 +18,6 @@ enum SubscriptionStatus {
   PAUSED
 }
 
-enum NotificationType {
-  RENEWAL_REMINDER
-}
-
-enum NotificationStatus {
-  SUCCESS
-  FAILED
-}
-
 model User {
   id               String            @id @default(cuid())
   email            String            @unique
@@ -39,25 +30,25 @@ model User {
 }
 
 model Subscription {
-  id               String             @id @default(cuid())
-  userId           String
-  name             String
-  planName         String?
-  amount           Decimal            @db.Decimal(10, 2)
-  currency         String             @default("TRY")
-  billingCycle     BillingCycle       @default(MONTHLY)
-  startDate        DateTime?
-  nextBillingDate  DateTime
-  autoRenew        Boolean            @default(true)
-  categoryId       String?
-  status           SubscriptionStatus @default(ACTIVE)
-  notes            String?
-  reminderDaysBefore Int              @default(3)
-  createdAt        DateTime           @default(now())
+  id                 String             @id @default(cuid())
+  userId             String
+  name               String
+  planName           String?
+  amount             Decimal            @db.Decimal(10, 2)
+  currency           String             @default("TRY")
+  billingCycle       BillingCycle       @default(MONTHLY)
+  startDate          DateTime?
+  nextBillingDate    DateTime
+  autoRenew          Boolean            @default(true)
+  categoryId         String?
+  status             SubscriptionStatus @default(ACTIVE)
+  notes              String?
+  reminderDaysBefore Int                @default(3)
+  createdAt          DateTime           @default(now())
 
-  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category         Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  notificationLogs NotificationLog[]
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category           Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  notificationLogs   NotificationLog[]
 }
 
 model Category {
@@ -73,14 +64,16 @@ model Category {
 }
 
 model NotificationLog {
-  id             String             @id @default(cuid())
+  id             String       @id @default(cuid())
   userId         String
   subscriptionId String
-  type           NotificationType
-  sentAt         DateTime           @default(now())
-  status         NotificationStatus
-  errorMessage   String?
+  type           String
+  message        String
+  scheduledFor   DateTime
+  createdAt      DateTime     @default(now())
 
-  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subscription   Subscription       @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, subscriptionId, type, scheduledFor])
 }
