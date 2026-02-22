@@ -302,10 +302,33 @@
                 "summary"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"monthlyTotal is numeric\", function () {",
+                  "    pm.expect(jsonData.monthlyTotal).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"yearlyTotal is numeric\", function () {",
+                  "    pm.expect(jsonData.yearlyTotal).to.be.a(\"number\");",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Upcoming (7 Days)",
+          "name": "Upcoming (Days)",
           "request": {
             "method": "GET",
             "header": [
@@ -315,7 +338,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/dashboard/upcoming?days=7",
+              "raw": "{{baseUrl}}/dashboard/upcoming?days={{days}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -326,14 +349,33 @@
               "query": [
                 {
                   "key": "days",
-                  "value": "7"
+                  "value": "{{days}}"
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(jsonData).to.be.an(\"array\");",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Top Expensive (Limit 5)",
+          "name": "Top Expensive (Limit)",
           "request": {
             "method": "GET",
             "header": [
@@ -343,7 +385,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/dashboard/top-expensive?limit=5",
+              "raw": "{{baseUrl}}/dashboard/top-expensive?limit={{limit}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -354,11 +396,37 @@
               "query": [
                 {
                   "key": "limit",
-                  "value": "5"
+                  "value": "{{limit}}"
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    pm.expect(jsonData).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "const limit = parseInt(pm.variables.get(\"limit\"), 10);",
+                  "if (!Number.isNaN(limit)) {",
+                  "    pm.test(\"Response length is within limit\", function () {",
+                  "        pm.expect(jsonData.length).to.be.at.most(limit);",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -484,6 +552,24 @@
           }
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "days",
+      "value": "7"
+    },
+    {
+      "key": "limit",
+      "value": "5"
     }
   ]
 }
